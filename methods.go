@@ -1,6 +1,7 @@
 package telebbb
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -35,8 +36,8 @@ const (
 // GetMe returns User infor about our bot
 func (t *TbBot) GetMe() (u *User, e error) {
 	type responce struct {
-		IsOk bool `json:"ok"`
-		Type User `json:"result"`
+		IsOk bool `json:"ok,omitempty"`
+		Type User `json:"result,omitempty"`
 	}
 	// Recreate all in one local struct
 	var m responce
@@ -57,13 +58,57 @@ func (t *TbBot) GetMe() (u *User, e error) {
 	if e = json.Unmarshal(d, &m); e != nil {
 		return
 	}
-	fmt.Println(m)
 	if r.StatusCode != http.StatusOK {
 		e = fmt.Errorf("we got invalid status code responce, code responce is %d", r.StatusCode)
 		return
 	}
 	if m.IsOk {
 		u = &m.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", m)
+	}
+	return
+}
+
+// SendMessage Sends message, we take interface{} you can send any struct as message but we recomend to use SendMessageType type as a message to avoid error responce from Telegram API will return Message type
+func (t *TbBot) SendMessage(message interface{}) (m Message, e error) {
+	type responce struct {
+		IsOk bool    `json:"ok,omitempty"`
+		Type Message `json:"result,omitempty"`
+	}
+	fmt.Println(message)
+	mrsh, e := json.Marshal(message)
+	if e != nil {
+		return
+	}
+	b := bytes.NewReader(mrsh)
+	req, e := http.NewRequest("POST", fmt.Sprintf(URL, t.token, "sendMessage"), b)
+	if e != nil {
+		return
+	}
+	req.Header.Set("Content-Type", "application/json")
+	hresp, e := t.client.Do(req)
+	if e != nil {
+		return
+	}
+	defer hresp.Body.Close()
+	if hresp.StatusCode != http.StatusOK {
+		e = fmt.Errorf("we got invalid status code responce, code responce is %d", hresp.StatusCode)
+		return
+	}
+	d, e := ioutil.ReadAll(hresp.Body)
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(d, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", m)
 	}
 	return
 }
