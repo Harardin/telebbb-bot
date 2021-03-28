@@ -529,6 +529,32 @@ func (t *TbBot) SendDice(message interface{}) (m *Message, e error) {
 	return
 }
 
+// SendChatAction Use this method when you need to tell the user that something is happening on the bot's side. The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status). Returns True on success. Accepts SendChatActionType struct, but can accept interface if needed.
+func (t *TbBot) SendChatAction(message interface{}) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "sendChatAction")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// TODO
+// Other functions
+
 // ----------------------------------
 
 // Additional functions -------------
