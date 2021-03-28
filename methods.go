@@ -20,22 +20,8 @@ import (
 	https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/getMe
 */
 
-const (
-	// URL contains main telegram url to place our calls
-	URL = "https://api.telegram.org/bot%s/%s"
-	// GetUpdates Returns new messages and incoming updates to bot
-	GetUpdates = "getUpdates"
-	// LogOut Use this method to log out from the cloud Bot API server before launching the bot locally
-	LogOut = "logOut"
-	// Close Use this method to close the bot instance before moving it from one local server to another. You need to delete the webhook before calling this method to ensure that the bot isn't launched again after server restart.
-	Close = "close"
-	// SendMessage Use this method to send text messages. On success, the sent Message is returned. Read about Message formats you can use on: https://core.telegram.org/bots/api#formatting-options
-	SendMessage = "sendMessage"
-	// ForwardMessage Use this method to forward messages of any kind. On success, the sent Message is returned.
-	ForwardMessage = "forwardMessage"
-	// CopyMessage same as forward message but without a link to message source. Posts as new message
-	CopyMessage = "copyMessage"
-)
+// URL contains main telegram url to place our calls
+const URL = "https://api.telegram.org/bot%s/%s"
 
 type responce struct {
 	IsOk bool    `json:"ok,omitempty"`
@@ -283,6 +269,260 @@ func (t *TbBot) SendAnimation(message interface{}, file *os.File) (m *Message, e
 	if r.IsOk {
 		m = &r.Type
 		return
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SendVoice Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or Document). On success, the sent Message is returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future. Accepts SendVoiceType struct, but can accept interface if needed
+func (t *TbBot) SendVoice(message interface{}, file *os.File) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	var resp []byte
+	if file != nil {
+		resp, e = t.uploadFile(file, "sendVoice", "voice", message)
+		if e != nil {
+			return nil, e
+		}
+	} else {
+		resp, e = t.sendPost(message, "sendVoice")
+		if e != nil {
+			return
+		}
+	}
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+		return
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SendVideoNote As of v.4.0, Telegram clients support rounded square mp4 videos of up to 1 minute long. Use this method to send video messages. On success, the sent Message is returned. Accepts SendVideoNoteType struct, but can accept interface if needed
+func (t *TbBot) SendVideoNote(message interface{}, file *os.File) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	var resp []byte
+	if file != nil {
+		resp, e = t.uploadFile(file, "sendVideoNote", "videonote", message)
+		if e != nil {
+			return nil, e
+		}
+	} else {
+		resp, e = t.sendPost(message, "sendVideoNote")
+		if e != nil {
+			return
+		}
+	}
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+		return
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SendMediaGroup Use this method to send a group of photos, videos, documents or audios as an album. Documents and audio files can be only grouped in an album with messages of the same type. On success, an array of Messages that were sent is returned. Accepts SendMediaGroupType struct, but can accept interface if needed
+func (t *TbBot) SendMediaGroup(message interface{}, file *os.File) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	var resp []byte
+	if file != nil {
+		resp, e = t.uploadFile(file, "sendMediaGroup", "mediagroup", message)
+		if e != nil {
+			return nil, e
+		}
+	} else {
+		resp, e = t.sendPost(message, "sendMediaGroup")
+		if e != nil {
+			return
+		}
+	}
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+		return
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SendLocation Use this method to send point on the map. On success, the sent Message is returned. Accepts SendLocationType struct, but can accept interface if needed
+func (t *TbBot) SendLocation(message interface{}) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "sendLocation")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// EditMessageLiveLocation Use this method to edit live location messages. A location can be edited until its live_period expires or editing is explicitly disabled by a call to stopMessageLiveLocation. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned. Accepts EditMessageLiveLocationType struct, but can accept interface if needed.
+func (t *TbBot) EditMessageLiveLocation(message interface{}) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "editMessageLiveLocation")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// StopMessageLiveLocation Use this method to stop updating a live location message before live_period expires. On success, if the message was sent by the bot, the sent Message is returned, otherwise True is returned. Accepts StopMessageLiveLocationType struct, but can accept interface if needed.
+func (t *TbBot) StopMessageLiveLocation(message interface{}) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "stopMessageLiveLocation")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SendVenue Use this method to send information about a venue. On success, the sent Message is returned. Accepts SendVenue struct, but can accept interface if needed.
+func (t *TbBot) SendVenue(message interface{}) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "sendVenue")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SendContact Use this method to send phone contacts. On success, the sent Message is returned. Accepts SendContactType struct, but can accept interface if needed.
+func (t *TbBot) SendContact(message interface{}) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "sendContact")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SendPoll Use this method to send a native poll. On success, the sent Message is returned. Accepts SendPollType struct, but can accept interface if needed.
+func (t *TbBot) SendPoll(message interface{}) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "sendPoll")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SendDice Use this method to send an animated emoji that will display a random value. On success, the sent Message is returned. Accepts SendDiceType struct, but can accept interface if needed.
+func (t *TbBot) SendDice(message interface{}) (m *Message, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "sendDice")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
 	} else {
 		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
 	}
