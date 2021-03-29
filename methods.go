@@ -626,6 +626,136 @@ func (t *TbBot) KickChatMember(message interface{}) (m bool, e error) {
 	return
 }
 
+// UnbanChatMember Use this method to unban a previously kicked user in a supergroup or channel. The user will not return to the group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it. So if the user is a member of the chat they will also be removed from the chat. If you don't want this, use the parameter only_if_banned. Returns True on success.
+/*
+	Parameter 		Type 				Required 	Description
+	chat_id 		Integer or String 	Yes 		Unique identifier for the target group or username of the target supergroup or channel (in the format @username)
+	user_id 		Integer 			Yes 		Unique identifier of the target user
+	only_if_banned 	Boolean 			Optional 	Do nothing if the user is not banned
+*/
+func (t *TbBot) UnbanChatMember(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "unbanChatMember")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// RestrictChatMember Use this method to restrict a user in a supergroup. The bot must be an administrator in the supergroup for this to work and must have the appropriate admin rights. Pass True for all permissions to lift restrictions from a user. Returns True on success.
+/*
+	Parameter 		Type 				Required 	Description
+	chat_id 		Integer or String 	Yes 		Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+	user_id 		Integer 			Yes 		Unique identifier of the target user
+	permissions 	ChatPermissions 	Yes 		A JSON-serialized object for new user permissions
+	until_date 		Integer 			Optional 	Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
+*/
+func (t *TbBot) RestrictChatMember(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "restrictChatMember")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// PromoteChatMember Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Pass False for all boolean parameters to demote a user. Returns True on success. Accepts PromoteChatMemberType but also can take interface
+/*
+	Parameter 				Type 				Required 	Description
+	chat_id 				Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	user_id 				Integer 			Yes 		Unique identifier of the target user
+	is_anonymous 			Boolean 			Optional 	Pass True, if the administrator's presence in the chat is hidden
+	can_manage_chat 		Boolean 			Optional 	Pass True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+	can_post_messages 		Boolean 			Optional 	Pass True, if the administrator can create channel posts, channels only
+	can_edit_messages 		Boolean 			Optional 	Pass True, if the administrator can edit messages of other users and can pin messages, channels only
+	can_delete_messages 	Boolean 			Optional 	Pass True, if the administrator can delete messages of other users
+	can_manage_voice_chats 	Boolean 			Optional 	Pass True, if the administrator can manage voice chats
+	can_restrict_members 	Boolean 			Optional 	Pass True, if the administrator can restrict, ban or unban chat members
+	can_promote_members 	Boolean 			Optional 	Pass True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him)
+	can_change_info 		Boolean 			Optional 	Pass True, if the administrator can change chat title, photo and other settings
+	can_invite_users 		Boolean 			Optional 	Pass True, if the administrator can invite new users to the chat
+	can_pin_messages 		Boolean 			Optional 	Pass True, if the administrator can pin messages, supergroups only
+*/
+func (t *TbBot) PromoteChatMember(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "promoteChatMember")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// SetChatAdministratorCustomTitle Use this method to set a custom title for an administrator in a supergroup promoted by the bot. Returns True on success.
+/*
+	Parameter 		Type 				Required 	Description
+	chat_id 		Integer or String 	Yes 		Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+	user_id 		Integer 			Yes 		Unique identifier of the target user
+	custom_title 	String 				Yes 		New custom title for the administrator; 0-16 characters, emoji are not allowed
+*/
+func (t *TbBot) SetChatAdministratorCustomTitle(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "setChatAdministratorCustomTitle")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// SetChatPermissions Use this method to set default chat permissions for all members. The bot must be an administrator in the group or a supergroup for this to work and must have the can_restrict_members admin rights. Returns True on success. Accepts SetChatPermissionsType struct, but also can take an interface.
+func (t *TbBot) SetChatPermissions(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "setChatPermissions")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
 // TODO
 // Other functions
 
