@@ -61,7 +61,7 @@ func (t *TbBot) SendMessage(message interface{}) (m *Message, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -378,7 +378,7 @@ func (t *TbBot) SendLocation(message interface{}) (m *Message, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -401,7 +401,7 @@ func (t *TbBot) EditMessageLiveLocation(message interface{}) (m *Message, e erro
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -424,7 +424,7 @@ func (t *TbBot) StopMessageLiveLocation(message interface{}) (m *Message, e erro
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -447,7 +447,7 @@ func (t *TbBot) SendVenue(message interface{}) (m *Message, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -470,7 +470,7 @@ func (t *TbBot) SendContact(message interface{}) (m *Message, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -493,7 +493,7 @@ func (t *TbBot) SendPoll(message interface{}) (m *Message, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -516,7 +516,7 @@ func (t *TbBot) SendDice(message interface{}) (m *Message, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -539,7 +539,7 @@ func (t *TbBot) SendChatAction(message interface{}) (m *Message, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -562,7 +562,7 @@ func (t *TbBot) GetUserProfilePhotos(message interface{}) (m *UserProfilePhotos,
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	type userProf struct {
 		IsOk bool              `json:"ok,omitempty"`
 		Type UserProfilePhotos `json:"result,omitempty"`
@@ -590,7 +590,7 @@ func (t *TbBot) GetFile(message interface{}) (m *File, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	type file struct {
 		IsOk bool `json:"ok,omitempty"`
 		Type File `json:"result,omitempty"`
@@ -617,7 +617,7 @@ func (t *TbBot) KickChatMember(message interface{}) (m bool, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -642,7 +642,7 @@ func (t *TbBot) UnbanChatMember(message interface{}) (m bool, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -668,7 +668,7 @@ func (t *TbBot) RestrictChatMember(message interface{}) (m bool, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -677,23 +677,7 @@ func (t *TbBot) RestrictChatMember(message interface{}) (m bool, e error) {
 	return
 }
 
-// PromoteChatMember Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Pass False for all boolean parameters to demote a user. Returns True on success. Accepts PromoteChatMemberType but also can take interface
-/*
-	Parameter 				Type 				Required 	Description
-	chat_id 				Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-	user_id 				Integer 			Yes 		Unique identifier of the target user
-	is_anonymous 			Boolean 			Optional 	Pass True, if the administrator's presence in the chat is hidden
-	can_manage_chat 		Boolean 			Optional 	Pass True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
-	can_post_messages 		Boolean 			Optional 	Pass True, if the administrator can create channel posts, channels only
-	can_edit_messages 		Boolean 			Optional 	Pass True, if the administrator can edit messages of other users and can pin messages, channels only
-	can_delete_messages 	Boolean 			Optional 	Pass True, if the administrator can delete messages of other users
-	can_manage_voice_chats 	Boolean 			Optional 	Pass True, if the administrator can manage voice chats
-	can_restrict_members 	Boolean 			Optional 	Pass True, if the administrator can restrict, ban or unban chat members
-	can_promote_members 	Boolean 			Optional 	Pass True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him)
-	can_change_info 		Boolean 			Optional 	Pass True, if the administrator can change chat title, photo and other settings
-	can_invite_users 		Boolean 			Optional 	Pass True, if the administrator can invite new users to the chat
-	can_pin_messages 		Boolean 			Optional 	Pass True, if the administrator can pin messages, supergroups only
-*/
+// PromoteChatMember Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Pass False for all boolean parameters to demote a user. Returns True on success. Accepts PromoteChatMemberType struct but also can take interface
 func (t *TbBot) PromoteChatMember(message interface{}) (m bool, e error) {
 	if message == nil {
 		e = fmt.Errorf("message can't be nil")
@@ -703,7 +687,7 @@ func (t *TbBot) PromoteChatMember(message interface{}) (m bool, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -728,7 +712,7 @@ func (t *TbBot) SetChatAdministratorCustomTitle(message interface{}) (m bool, e 
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
@@ -747,12 +731,43 @@ func (t *TbBot) SetChatPermissions(message interface{}) (m bool, e error) {
 	if e != nil {
 		return
 	}
-	// Working with ressponce
+	// Working with responce
 	var r responce
 	if e = json.Unmarshal(resp, &r); e != nil {
 		return
 	}
 	m = r.IsOk
+	return
+}
+
+// ExportChatInviteLink Use this method to generate a new primary invite link for a chat; any previously generated primary link is revoked. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the new invite link as String on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+*/
+func (t *TbBot) ExportChatInviteLink(message interface{}) (m interface{}, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "setChatPermissions")
+	if e != nil {
+		return
+	}
+	type link struct {
+		IsOk bool        `json:"ok,omitempty"`
+		Type interface{} `json:"result,omitempty"`
+	}
+	var r link
+	// Working with responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
 	return
 }
 
