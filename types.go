@@ -973,6 +973,16 @@ type DeleteChatStickerSetType struct {
 	ChatID interface{} `json:"chat_id,omitempty"` // Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
 }
 
+// ChatInviteLinkType Represents an invite link for a chat.
+type ChatInviteLinkType struct {
+	InviteLink  string `json:"invite_link,omitempty"`  // The invite link. If the link was created by another chat administrator, then the second part of the link will be replaced with “…”.
+	Creator     *User  `json:"creator,omitempty"`      // Creator of the link
+	IsPrimary   bool   `json:"is_primary,omitempty"`   // True, if the link is primary
+	IsRevoked   bool   `json:"is_revoked,omitempty"`   // True, if the link is revoked
+	ExpireDate  int    `json:"expire_date,omitempty"`  // Optional. Point in time (Unix timestamp) when the link will expire or has been expired
+	MemberLimit int    `json:"member_limit,omitempty"` // Optional. Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
+}
+
 // AnswerCallbackQueryType Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
 // Alternatively, the user can be redirected to the specified Game URL. For this option to work, you must first create a game for your bot via @Botfather and accept the terms. Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a parameter.
 type AnswerCallbackQueryType struct {

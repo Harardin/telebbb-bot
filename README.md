@@ -19,3 +19,5 @@ rp, err := t.SendPhoto(tb.SendPhotoType{
     // FileID taken from Message respond after uploading file to telegram
 }, nil)
 ```
+
+Notice, not all functions was propely tested.
