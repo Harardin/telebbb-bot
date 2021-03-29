@@ -552,6 +552,80 @@ func (t *TbBot) SendChatAction(message interface{}) (m *Message, e error) {
 	return
 }
 
+// GetUserProfilePhotos Use this method to get a list of profile pictures for a user. Returns a UserProfilePhotos object.
+func (t *TbBot) GetUserProfilePhotos(message interface{}) (m *UserProfilePhotos, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "getUserProfilePhotos")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	type userProf struct {
+		IsOk bool              `json:"ok,omitempty"`
+		Type UserProfilePhotos `json:"result,omitempty"`
+	}
+	var r userProf
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// GetFile Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile again.
+// Note: This function may not preserve the original file name and MIME type. You should save the file's MIME type and name (if available) when the File object is received.
+func (t *TbBot) GetFile(message interface{}) (m *File, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "getFile")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	type file struct {
+		IsOk bool `json:"ok,omitempty"`
+		Type File `json:"result,omitempty"`
+	}
+	var r file
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// KickChatMember Use this method to kick a user from a group, a supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success. Accepts KickChatMemberType or any interface
+func (t *TbBot) KickChatMember(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "kickChatMember")
+	if e != nil {
+		return
+	}
+	// Working with ressponce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
 // TODO
 // Other functions
 
