@@ -870,6 +870,65 @@ func (t *TbBot) RevokeChatInviteLink(message interface{}) (m *ChatInviteLinkType
 	return
 }
 
+// SetChatPhoto Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	photo 		InputFile 			Yes 		New chat photo, uploaded using multipart/form-data
+*/
+func (t *TbBot) SetChatPhoto(message interface{}, file *os.File) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	var resp []byte
+	if file != nil {
+		resp, e = t.uploadFile(file, "setChatPhoto", "photo", message)
+		if e != nil {
+			return false, e
+		}
+	} else {
+		resp, e = t.sendPost(message, "setChatPhoto")
+		if e != nil {
+			return
+		}
+	}
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = r.IsOk
+		return
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// DeleteChatPhoto Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+*/
+func (t *TbBot) DeleteChatPhoto(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "deleteChatPhoto")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
 // TODO
 // Other functions
 
