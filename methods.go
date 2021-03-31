@@ -804,6 +804,72 @@ func (t *TbBot) CreateChatInviteLink(message interface{}) (m *ChatInviteLinkType
 	return
 }
 
+// EditChatInviteLink Use this method to edit a non-primary invite link created by the bot. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the edited invite link as a ChatInviteLink object.
+/*
+	Parameter 		Type 				Required 	Description
+	chat_id 		Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	invite_link 	String 				Yes 		The invite link to edit
+	expire_date 	Integer 			Optional 	Point in time (Unix timestamp) when the link will expire
+	member_limit 	Integer 			Optional 	Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
+*/
+func (t *TbBot) EditChatInviteLink(message interface{}) (m *ChatInviteLinkType, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "editChatInviteLink")
+	if e != nil {
+		return
+	}
+	type link struct {
+		IsOk bool               `json:"ok,omitempty"`
+		Type ChatInviteLinkType `json:"result,omitempty"`
+	}
+	var r link
+	// Working with responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// RevokeChatInviteLink Use this method to revoke an invite link created by the bot. If the primary link is revoked, a new link is automatically generated. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the revoked invite link as ChatInviteLink object.
+/*
+	Parameter 		Type 				Required 	Description
+	chat_id 		Integer or String 	Yes 		Unique identifier of the target chat or username of the target channel (in the format @channelusername)
+	invite_link 	String 				Yes 		The invite link to revoke
+*/
+func (t *TbBot) RevokeChatInviteLink(message interface{}) (m *ChatInviteLinkType, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "revokeChatInviteLink")
+	if e != nil {
+		return
+	}
+	type link struct {
+		IsOk bool               `json:"ok,omitempty"`
+		Type ChatInviteLinkType `json:"result,omitempty"`
+	}
+	var r link
+	// Working with responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
 // TODO
 // Other functions
 
