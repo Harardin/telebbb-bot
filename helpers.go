@@ -12,6 +12,84 @@ func (t *TbBot) PostMessage(message interface{}, method string) (a interface{}, 
 			return nil, e
 		}
 		return r, nil
+	case "forwardMessage":
+		r, e := t.ForwardMessage(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "copyMessage":
+		r, e := t.CopyMessage(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "sendLocation":
+		r, e := t.SendLocation(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "editMessageLiveLocation":
+		r, e := t.EditMessageLiveLocation(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "stopMessageLiveLocation":
+		r, e := t.StopMessageLiveLocation(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "sendVenue":
+		r, e := t.SendVenue(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "sendContact":
+		r, e := t.SendContact(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "sendPoll":
+		r, e := t.SendPoll(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "sendDice":
+		r, e := t.SendDice(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "sendChatAction":
+		r, e := t.SendChatAction(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "getUserProfilePhotos":
+		r, e := t.GetUserProfilePhotos(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "getFile":
+		r, e := t.GetFile(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
+	case "kickChatMember":
+		r, e := t.KickChatMember(message)
+		if e != nil {
+			return nil, e
+		}
+		return r, nil
 
 	// TODO
 	// Other methods
