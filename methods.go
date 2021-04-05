@@ -57,7 +57,7 @@ func (t *TbBot) SendMessage(message interface{}) (m *Message, e error) {
 		e = fmt.Errorf("message can't be nil")
 		return
 	}
-	resp, e := t.sendPost(message, "forwardMessage")
+	resp, e := t.sendPost(message, "sendMessage")
 	if e != nil {
 		return
 	}
@@ -801,6 +801,474 @@ func (t *TbBot) CreateChatInviteLink(message interface{}) (m *ChatInviteLinkType
 	} else {
 		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
 	}
+	return
+}
+
+// EditChatInviteLink Use this method to edit a non-primary invite link created by the bot. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the edited invite link as a ChatInviteLink object.
+/*
+	Parameter 		Type 				Required 	Description
+	chat_id 		Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	invite_link 	String 				Yes 		The invite link to edit
+	expire_date 	Integer 			Optional 	Point in time (Unix timestamp) when the link will expire
+	member_limit 	Integer 			Optional 	Maximum number of users that can be members of the chat simultaneously after joining the chat via this invite link; 1-99999
+*/
+func (t *TbBot) EditChatInviteLink(message interface{}) (m *ChatInviteLinkType, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "editChatInviteLink")
+	if e != nil {
+		return
+	}
+	type link struct {
+		IsOk bool               `json:"ok,omitempty"`
+		Type ChatInviteLinkType `json:"result,omitempty"`
+	}
+	var r link
+	// Working with responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// RevokeChatInviteLink Use this method to revoke an invite link created by the bot. If the primary link is revoked, a new link is automatically generated. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns the revoked invite link as ChatInviteLink object.
+/*
+	Parameter 		Type 				Required 	Description
+	chat_id 		Integer or String 	Yes 		Unique identifier of the target chat or username of the target channel (in the format @channelusername)
+	invite_link 	String 				Yes 		The invite link to revoke
+*/
+func (t *TbBot) RevokeChatInviteLink(message interface{}) (m *ChatInviteLinkType, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "revokeChatInviteLink")
+	if e != nil {
+		return
+	}
+	type link struct {
+		IsOk bool               `json:"ok,omitempty"`
+		Type ChatInviteLinkType `json:"result,omitempty"`
+	}
+	var r link
+	// Working with responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SetChatPhoto Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	photo 		InputFile 			Yes 		New chat photo, uploaded using multipart/form-data
+*/
+func (t *TbBot) SetChatPhoto(message interface{}, file *os.File) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	var resp []byte
+	if file != nil {
+		resp, e = t.uploadFile(file, "setChatPhoto", "photo", message)
+		if e != nil {
+			return false, e
+		}
+	} else {
+		resp, e = t.sendPost(message, "setChatPhoto")
+		if e != nil {
+			return
+		}
+	}
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = r.IsOk
+		return
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// DeleteChatPhoto Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+*/
+func (t *TbBot) DeleteChatPhoto(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "deleteChatPhoto")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// SetChatTitle Use this method to change the title of a chat. Titles can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 	Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	title 		String 				Yes 	New chat title, 1-255 characters
+*/
+func (t *TbBot) SetChatTitle(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "setChatTitle")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// SetChatDescription Use this method to change the description of a group, a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
+/*
+	Parameter 		Type 				Required 	Description
+	chat_id 		Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	description 	String 				Optional 	New chat description, 0-255 characters
+*/
+func (t *TbBot) SetChatDescription(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "setChatDescription")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// PinChatMessage Use this method to add a message to the list of pinned messages in a chat. If the chat is not a private chat, the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	message_id 	Integer 			Yes 		Identifier of a message to pin
+	disable_notification 			Boolean 	Optional 	Pass True, if it is not necessary to send a notification to all chat members about the new pinned message. Notifications are always disabled in channels and private chats.
+*/
+func (t *TbBot) PinChatMessage(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "pinChatMessage")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// UnpinChatMessage Use this method to remove a message from the list of pinned messages in a chat. If the chat is not a private chat, the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	message_id 	Integer 			Optional 	Identifier of a message to unpin. If not specified, the most recent pinned message (by sending date) will be unpinned.
+*/
+func (t *TbBot) UnpinChatMessage(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "unpinChatMessage")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// UnpinAllChatMessages Use this method to clear the list of pinned messages in a chat. If the chat is not a private chat, the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' admin right in a supergroup or 'can_edit_messages' admin right in a channel. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+*/
+func (t *TbBot) UnpinAllChatMessages(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "unpinAllChatMessages")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// LeaveChat Use this method for your bot to leave a group, supergroup or channel. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+*/
+func (t *TbBot) LeaveChat(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "leaveChat")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// GetChat Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.). Returns a Chat object on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+*/
+func (t *TbBot) GetChat(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "getChat")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// GetChatAdministrators Use this method to get a list of administrators in a chat. On success, returns an Array of ChatMember objects that contains information about all chat administrators except other bots. If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+*/
+func (t *TbBot) GetChatAdministrators(message interface{}) (m *[]ChatMember, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "getChatAdministrators")
+	if e != nil {
+		return
+	}
+	var r struct {
+		IsOk bool         `json:"ok,omitempty"`
+		Type []ChatMember `json:"result,omitempty"`
+	}
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// GetChatMembersCount Use this method to get the number of members in a chat. Returns Int on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+*/
+func (t *TbBot) GetChatMembersCount(message interface{}) (m int, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "getChatMembersCount")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r struct {
+		IsOk bool `json:"ok,omitempty"`
+		Type int  `json:"result,omitempty"`
+	}
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// GetChatMember Use this method to get information about a member of a chat. Returns a ChatMember object on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+	user_id 	Integer 			Yes 		Unique identifier of the target user
+*/
+func (t *TbBot) GetChatMember(message interface{}) (m *ChatMember, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "getChatMember")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r struct {
+		IsOk bool       `json:"ok,omitempty"`
+		Type ChatMember `json:"result,omitempty"`
+	}
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	if r.IsOk {
+		m = &r.Type
+	} else {
+		e = fmt.Errorf("we got 200 responce but have false in status returned struct %+v", r)
+	}
+	return
+}
+
+// SetChatStickerSet Use this method to set a new group sticker set for a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Use the field can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method. Returns True on success.
+/*
+	Parameter 			Type 				Required 	Description
+	chat_id 			Integer or String 	Yes 		Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+	sticker_set_name 	String 				Yes 		Name of the sticker set to be set as the group sticker set
+*/
+func (t *TbBot) SetChatStickerSet(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "setChatStickerSet")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// DeleteChatStickerSet Use this method to delete a group sticker set from a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Use the field can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method. Returns True on success.
+/*
+	Parameter 	Type 				Required 	Description
+	chat_id 	Integer or String 	Yes 		Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+*/
+func (t *TbBot) DeleteChatStickerSet(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "deleteChatStickerSet")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
+	return
+}
+
+// TODO
+/*
+	Add methods:
+		- answerCallbackQuery
+		- setMyCommands
+		- getMyCommands
+*/
+
+// Updating messages methods ------------------------------
+
+// EditMessageText Use this method to edit text and game messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+/*
+	Parameter 					Type 						Required 	Description
+	chat_id 					Integer or String 			Optional 	Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+	message_id 					Integer 					Optional 	Required if inline_message_id is not specified. Identifier of the message to edit
+	inline_message_id 			String 						Optional 	Required if chat_id and message_id are not specified. Identifier of the inline message
+	text 						String 						Yes 		New text of the message, 1-4096 characters after entities parsing
+	parse_mode 					String 						Optional 	Mode for parsing entities in the message text. See formatting options for more details.
+	entities 					Array of MessageEntity 		Optional 	List of special entities that appear in message text, which can be specified instead of parse_mode
+	disable_web_page_preview 	Boolean 					Optional 	Disables link previews for links in this message
+	reply_markup 				InlineKeyboardMarkup 		Optional 	A JSON-serialized object for an inline keyboard.
+*/
+func (t *TbBot) EditMessageText(message interface{}) (m bool, e error) {
+	if message == nil {
+		e = fmt.Errorf("message can't be nil")
+		return
+	}
+	resp, e := t.sendPost(message, "editMessageText")
+	if e != nil {
+		return
+	}
+	// Working with responce
+	var r responce
+	if e = json.Unmarshal(resp, &r); e != nil {
+		return
+	}
+	m = r.IsOk
 	return
 }
 
