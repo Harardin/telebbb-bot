@@ -28,7 +28,7 @@ func NewBot(c BotConfig) (*TbBot, error) {
 		go b.ServeHook(c.Port) // webhook listner
 	case "local":
 		go b.LocalListen() // local listner
-	case "none": // Don't listen for telegram msgs
+	case "none": // Don't listen for telegram msgs ignore
 		return b, nil
 	default:
 		return nil, fmt.Errorf("unknown bot type selected, please chose from 'webhook', or 'local'")
