@@ -11,7 +11,7 @@ import (
 // LocalListen Listen for bot updates local with for loop every second
 func (b *TbBot) LocalListen() {
 	for {
-		time.Sleep(time.Second)
+		time.Sleep(time.Minute * 5)
 		r, err := http.Get(fmt.Sprintf(URL, b.token, "getUpdates"))
 		if err != nil {
 			b.Errors <- err
